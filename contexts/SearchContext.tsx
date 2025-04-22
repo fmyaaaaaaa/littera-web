@@ -23,6 +23,7 @@ interface SearchContextType {
   executeSearch: <T>() => Promise<T | null>;
   executeSearchWithCoordinates: <T>(latitude: string, longitude: string, placeName: string) => Promise<T | null>;
   searchByPlaceName: <T>(placeName: string) => Promise<T | null>;
+  buildQueryParams: () => string;
   isSearching: boolean;
 }
 
@@ -58,6 +59,20 @@ export function SearchProvider({ children }: { children: ReactNode }) {
     setSearchParams((prev) => ({ ...prev, placeName: value }));
   }, []);
 
+  const buildQueryParams = useCallback(() => {
+    const params = new URLSearchParams();
+    if (searchParams.latitude !== "") {
+      params.set("latitude", searchParams.latitude);
+    }
+    if (searchParams.longitude !== "") {
+      params.set("longitude", searchParams.longitude);
+    }
+    if (searchParams.placeName !== "") {
+      params.set("placeName", searchParams.placeName);
+    }
+    return params.toString();
+  }, [searchParams]);
+
   const registerSearchHandler = useCallback(<T,>(handler: SearchHandler<T> | null) => {
     handlerRef.current = handler as SearchHandler<unknown> | null;
     console.log("Registered search handler:", typeof handlerRef.current);
@@ -65,23 +80,9 @@ export function SearchProvider({ children }: { children: ReactNode }) {
 
   const syncWithQueryParams = useCallback(() => {
     const url = new URL(window.location.href);
-    if (searchParams.placeName) {
-      url.searchParams.set("placeName", searchParams.placeName);
-    } else {
-      url.searchParams.delete("placeName");
-    }
-    if (searchParams.latitude) {
-      url.searchParams.set("latitude", searchParams.latitude);
-    } else {
-      url.searchParams.delete("latitude");
-    }
-    if (searchParams.longitude) {
-      url.searchParams.set("longitude", searchParams.longitude);
-    } else {
-      url.searchParams.delete("longitude");
-    }
-    router.push(url.pathname + url.search);
-  }, [router, searchParams]);
+    const params = buildQueryParams();
+    router.push(`${url.pathname}?${params}`);
+  }, [router, buildQueryParams]);
 
   const loadFromQueryParams = useCallback(() => {
     const placeName = nextSearchParams.get("placeName");
@@ -192,6 +193,7 @@ export function SearchProvider({ children }: { children: ReactNode }) {
     executeSearch,
     executeSearchWithCoordinates,
     searchByPlaceName,
+    buildQueryParams,
     isSearching,
   };
 

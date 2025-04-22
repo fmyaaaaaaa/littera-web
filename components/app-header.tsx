@@ -1,6 +1,5 @@
 "use client";
 
-import { geocodeLocationAction } from "@/app/actions/geocodeLocationAction";
 import { useSearch } from "@/contexts/SearchContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { MapPin, Search } from "lucide-react";

@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { GoogleMapView } from "./GoogleMapView";
 
 export function MapContainer() {
-  const { registerSearchHandler } = useSearch();
+  const { registerSearchHandler, searchParams } = useSearch();
   const [loading, setLoading] = useState(false);
   const [reports, setReports] = useState<Report[]>([]);
 
@@ -43,10 +43,14 @@ export function MapContainer() {
   useEffect(() => {
     registerSearchHandler(searchHandler);
 
+    if (searchParams.latitude && searchParams.longitude) {
+      searchHandler(searchParams);
+    }
+
     return () => {
       registerSearchHandler(null);
     };
-  }, [registerSearchHandler, searchHandler]);
+  }, [registerSearchHandler, searchHandler, searchParams]);
 
   return (
     <div className="h-full w-full">
