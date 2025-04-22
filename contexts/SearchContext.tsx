@@ -1,6 +1,6 @@
 "use client";
 
-import { type ReactNode, createContext, useCallback, useContext, useState } from "react";
+import { type ReactNode, createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 
 type LocationSearch = {
   latitude: string;
@@ -15,6 +15,7 @@ interface SearchContextType {
   setLongitude: (value: string) => void;
   registerSearchHandler: <T>(handler: SearchHandler<T> | null) => void;
   executeSearch: <T>() => Promise<T | null>;
+  executeSearchWithCoordinates: <T>(latitude: string, longitude: string) => Promise<T | null>;
   isSearching: boolean;
 }
 
@@ -26,7 +27,7 @@ export function SearchProvider({ children }: { children: ReactNode }) {
     longitude: "",
   });
 
-  const [activeSearchHandler, setActiveSearchHandler] = useState<SearchHandler<unknown> | null>(null);
+  const handlerRef = useRef<SearchHandler<unknown> | null>(null);
 
   const [isSearching, setIsSearching] = useState(false);
 
@@ -39,18 +40,20 @@ export function SearchProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const registerSearchHandler = useCallback(<T,>(handler: SearchHandler<T> | null) => {
-    setActiveSearchHandler(handler as SearchHandler<unknown> | null);
+    handlerRef.current = handler as SearchHandler<unknown> | null;
+    console.log("Registered search handler:", typeof handlerRef.current);
   }, []);
 
   const executeSearch = useCallback(async <T,>(): Promise<T | null> => {
-    if (!activeSearchHandler) {
+    const handler = handlerRef.current;
+    if (!handler) {
       console.warn("No search handler registered");
       return null;
     }
 
     try {
       setIsSearching(true);
-      const results = await activeSearchHandler(searchParams);
+      const results = await handler(searchParams);
       return results as T;
     } catch (error) {
       console.error("Search error:", error);
@@ -58,7 +61,33 @@ export function SearchProvider({ children }: { children: ReactNode }) {
     } finally {
       setIsSearching(false);
     }
-  }, [activeSearchHandler, searchParams]);
+  }, [searchParams]);
+
+  /**
+   * Use this function to execute a search with parameters.
+   * Reason: After getting a geocoodination from API and updating this context, it will not be reffered correctly by executeSearch()
+   */
+  const executeSearchWithCoordinates = useCallback(
+    async <T,>(latitude: string, longitude: string): Promise<T | null> => {
+      const handler = handlerRef.current;
+      if (!handler) {
+        console.warn("No search handler registered");
+        return null;
+      }
+
+      try {
+        setIsSearching(true);
+        const results = await handler({ latitude, longitude });
+        return results as T;
+      } catch (error) {
+        console.error("Search error:", error);
+        throw error;
+      } finally {
+        setIsSearching(false);
+      }
+    },
+    []
+  );
 
   const value: SearchContextType = {
     searchParams,
@@ -66,6 +95,7 @@ export function SearchProvider({ children }: { children: ReactNode }) {
     setLongitude,
     registerSearchHandler,
     executeSearch,
+    executeSearchWithCoordinates,
     isSearching,
   };
 

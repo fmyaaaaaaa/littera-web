@@ -13,7 +13,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 
 export function AppHeader() {
   const isMobile = useIsMobile();
-  const { searchParams, setLatitude, setLongitude, executeSearch, isSearching } = useSearch();
+  const { searchParams, setLatitude, setLongitude, executeSearch, executeSearchWithCoordinates, isSearching } =
+    useSearch();
   const [placeName, setPlaceName] = useState("");
   const [searchMode, setSearchMode] = useState<"coordinates" | "place">("place");
 
@@ -51,9 +52,7 @@ export function AppHeader() {
       }
       setLatitude(results.data.latitude);
       setLongitude(results.data.longitude);
-      setPlaceName(results.data.placeName);
-      setSearchMode("coordinates");
-      await executeSearch();
+      await executeSearchWithCoordinates(results.data.latitude, results.data.longitude);
     } else {
       await executeSearch();
     }
