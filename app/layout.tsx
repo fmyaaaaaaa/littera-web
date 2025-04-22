@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { AppHeader } from "@/components/app-header";
 import AppSidebar from "@/components/app-sidebar";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { Toaster } from "@/components/ui/sonner";
+import { SearchProvider } from "@/contexts/SearchContext";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -23,13 +26,16 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} antialiased`}>
-        <SidebarProvider defaultOpen={false}>
-          <AppSidebar />
-          <SidebarInset>
-            <SidebarTrigger className="-ml-1" />
-            {children}
-          </SidebarInset>
-        </SidebarProvider>
+        <SearchProvider>
+          <SidebarProvider defaultOpen={false}>
+            <AppSidebar />
+            <SidebarInset>
+              <AppHeader />
+              <main className="h-full pt-24 md:pt-12">{children}</main>
+              <Toaster />
+            </SidebarInset>
+          </SidebarProvider>
+        </SearchProvider>
       </body>
     </html>
   );

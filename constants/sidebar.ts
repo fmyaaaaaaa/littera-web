@@ -1,19 +1,19 @@
-import { File, LayoutDashboard, LocateIcon } from "lucide-react";
+import { LayoutDashboard, MapPin, ScrollText } from "lucide-react";
 
 export const sidebarItems = [
+  {
+    name: "Map",
+    url: "/map",
+    icon: MapPin,
+  },
   {
     name: "Dashboard",
     url: "/dashbaord",
     icon: LayoutDashboard,
   },
   {
-    name: "Map",
-    url: "/map",
-    icon: LocateIcon,
-  },
-  {
     name: "Reports",
     url: "/reports",
-    icon: File,
+    icon: ScrollText,
   },
 ];
