@@ -13,15 +13,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 
 export function AppHeader() {
   const isMobile = useIsMobile();
-  const { searchParams, setLatitude, setLongitude, executeSearch, executeSearchWithCoordinates, isSearching } =
+  const { searchParams, setPlaceName, setLatitude, setLongitude, executeSearch, searchByPlaceName, isSearching } =
     useSearch();
-  const [placeName, setPlaceName] = useState("");
   const [searchMode, setSearchMode] = useState<"coordinates" | "place">("place");
 
   const isDisabled =
     isSearching ||
     (searchMode === "coordinates" && (!searchParams.latitude || !searchParams.longitude)) ||
-    (searchMode === "place" && !placeName);
+    (searchMode === "place" && !searchParams.placeName);
 
   const getCurrentLocation = () => {
     if (navigator.geolocation) {
@@ -42,17 +41,7 @@ export function AppHeader() {
 
   const handleSearch = async () => {
     if (searchMode === "place") {
-      const results = await geocodeLocationAction(placeName);
-      if (!results.success || !results.data) {
-        toast.error("Cannot find location for the place name. \n Please try again or use coordinates.", {
-          position: "top-right",
-          style: { whiteSpace: "pre-line" },
-        });
-        return;
-      }
-      setLatitude(results.data.latitude);
-      setLongitude(results.data.longitude);
-      await executeSearchWithCoordinates(results.data.latitude, results.data.longitude);
+      await searchByPlaceName(searchParams.placeName);
     } else {
       await executeSearch();
     }
@@ -74,7 +63,7 @@ export function AppHeader() {
               <div className="flex items-center gap-2">
                 <Input
                   placeholder="Place name..."
-                  value={placeName}
+                  value={searchParams.placeName}
                   onChange={(e) => setPlaceName(e.target.value)}
                   className="pr-8"
                 />
