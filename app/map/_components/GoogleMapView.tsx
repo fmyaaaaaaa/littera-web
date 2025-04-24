@@ -1,13 +1,14 @@
 "use client";
 
 import { getReportDetail } from "@/app/actions/getReportDetail";
+import { LoadingSpinner } from "@/components/loading-spinner";
 import { useSearch } from "@/contexts/SearchContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { formatDate } from "@/lib/date";
 import type { Report, ReportDetail } from "@/types";
-import { APIProvider, Map as GoogleMap, InfoWindow, Marker } from "@vis.gl/react-google-maps";
+import { APIProvider, Map as GoogleMap, InfoWindow } from "@vis.gl/react-google-maps";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { CustomMarker } from "./CustomMarker";
 import { GoogleMapController } from "./GoogleMapController";
 import { LitterCategoryChips } from "./LitterCategoryChip";
@@ -20,7 +21,7 @@ const API_KEY = (process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string) ?? globa
 const MAP_ID = (process.env.NEXT_PUBLIC_GOOGLE_MAP_ID as string) ?? globalThis.GOOGLE_MAP_ID;
 
 export function GoogleMapView({ reports }: GoogleMapViewProps) {
-  const { searchParams } = useSearch();
+  const { searchParams, isSearching } = useSearch();
   const isMobile = useIsMobile();
   const [reportDetail, setReportDetail] = useState<ReportDetail | null>(null);
 
@@ -42,15 +43,10 @@ export function GoogleMapView({ reports }: GoogleMapViewProps) {
     }
   };
 
-  useEffect(() => {
-    if (reportDetail) {
-      console.log(reportDetail);
-    }
-  }, [reportDetail]);
-
   return (
     <div className="h-full w-full">
       <APIProvider apiKey={API_KEY}>
+        {isSearching && <LoadingSpinner />}
         <GoogleMap
           mapId={MAP_ID}
           defaultZoom={5}

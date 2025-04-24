@@ -7,11 +7,6 @@ export const sidebarItems = [
     icon: MapPin,
   },
   {
-    name: "Dashboard",
-    url: "/dashbaord",
-    icon: LayoutDashboard,
-  },
-  {
     name: "Reports",
     url: "/reports",
     icon: ScrollText,

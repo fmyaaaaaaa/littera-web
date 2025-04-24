@@ -51,7 +51,9 @@ export function MapContainer() {
   return (
     <div className="h-full w-full">
       <GoogleMapView reports={reports} />
-      {loading && <div className="absolute top-16 right-4 bg-white p-2 rounded shadow text-sm">Loading...</div>}
+      {loading && (
+        <div className="absolute top-16 right-4 bg-white p-2 rounded shadow text-sm">Loading Location...</div>
+      )}
     </div>
   );
 }
