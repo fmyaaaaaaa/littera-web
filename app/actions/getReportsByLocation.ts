@@ -5,13 +5,15 @@ import type { Report, ReportsResponse } from "@/types";
 export const getReportsByLocation = async (latitude: number, longitude: number): Promise<ReportsResponse> => {
   const apiUsername = process.env.BASIC_API_USERNAME;
   const apiPassword = process.env.BASIC_API_KEY;
+  const radius = process.env.LITTER_LOCATION_RADIUS;
+  const timeLength = process.env.LITTER_LOCATION_TIME_LENGTH;
 
   const authString =
     apiUsername && apiPassword ? `Basic ${Buffer.from(`${apiUsername}:${apiPassword}`).toString("base64")}` : undefined;
 
   try {
     const response = await fetch(
-      `${process.env.API_BASE_URL}/reports/points/location?latitude=${latitude}&longitude=${longitude}&radius=100000&time_length=1 month`,
+      `${process.env.API_BASE_URL}/reports/points/location?latitude=${latitude}&longitude=${longitude}&radius=${radius}&time_length=${timeLength}`,
       {
         headers: {
           "Content-Type": "application/json",
