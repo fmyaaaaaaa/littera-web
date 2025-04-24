@@ -1,3 +1,10 @@
+import type { Pagination } from "./common";
+
+export enum ReportStatus {
+  REPORTING = 0,
+  COLLECTED_SUCCESS = 2,
+}
+
 export interface LitterCategory {
   id: number;
   jp: string;
@@ -9,7 +16,7 @@ export interface Report {
   latitude: number;
   longitude: number;
   report_date: string;
-  status: number;
+  status: ReportStatus;
   main_category_id: number;
   litter_categories: LitterCategory[];
 }
@@ -27,7 +34,7 @@ export interface ReportDetail {
   latitude: number;
   longitude: number;
   report_date: string;
-  status: number;
+  status: ReportStatus;
   litter_categories: LitterCategory[];
   photo_url: string;
 }
@@ -35,5 +42,18 @@ export interface ReportDetail {
 export interface ReportDetailResponse {
   success: boolean;
   data?: ReportDetail;
+  error?: string;
+}
+
+export interface ReportWithImage extends Report {
+  photo_url: string;
+}
+
+export interface ReportsWithImageResponse {
+  success: boolean;
+  data?: {
+    reports: ReportWithImage[];
+    pagination: Pagination;
+  };
   error?: string;
 }

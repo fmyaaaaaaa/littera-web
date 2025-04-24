@@ -8,7 +8,7 @@ import { formatDate } from "@/lib/date";
 import type { Report, ReportDetail } from "@/types";
 import { APIProvider, Map as GoogleMap, InfoWindow } from "@vis.gl/react-google-maps";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { CustomMarker } from "./CustomMarker";
 import { GoogleMapController } from "./GoogleMapController";
 import { LitterCategoryChips } from "./LitterCategoryChip";
@@ -42,12 +42,6 @@ export function GoogleMapView({ reports }: GoogleMapViewProps) {
       setReportDetail(reportDetail.data);
     }
   };
-
-  useEffect(() => {
-    if (reportDetail) {
-      console.log(reportDetail);
-    }
-  }, [reportDetail]);
 
   return (
     <div className="h-full w-full">

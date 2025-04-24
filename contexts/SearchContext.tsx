@@ -10,6 +10,8 @@ type LocationSearch = {
   latitude: string;
   longitude: string;
   placeName: string;
+  page?: number;
+  pageSize?: number;
 };
 
 type SearchHandler<T = unknown> = (params: LocationSearch) => Promise<T>;
@@ -19,6 +21,7 @@ interface SearchContextType {
   setLatitude: (value: string) => void;
   setLongitude: (value: string) => void;
   setPlaceName: (value: string) => void;
+  setPage: (value: number) => void;
   registerSearchHandler: <T>(handler: SearchHandler<T> | null) => void;
   executeSearch: <T>() => Promise<T | null>;
   executeSearchWithCoordinates: <T>(latitude: string, longitude: string, placeName: string) => Promise<T | null>;
@@ -33,19 +36,17 @@ export function SearchProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
   const nextSearchParams = useSearchParams();
 
-  const [searchParams, setSearchParams] = useState<LocationSearch>({
-    latitude: "",
-    longitude: "",
-    placeName: "",
-  });
+  const initialSearchParams: LocationSearch = {
+    latitude: nextSearchParams?.get("latitude") || "",
+    longitude: nextSearchParams?.get("longitude") || "",
+    placeName: nextSearchParams?.get("placeName") || "",
+  };
+
+  const [searchParams, setSearchParams] = useState<LocationSearch>(initialSearchParams);
 
   const handlerRef = useRef<SearchHandler<unknown> | null>(null);
 
   const [isSearching, setIsSearching] = useState(false);
-
-  useEffect(() => {
-    loadFromQueryParams();
-  }, []);
 
   const setLatitude = useCallback((value: string) => {
     setSearchParams((prev) => ({ ...prev, latitude: value }));
@@ -57,6 +58,10 @@ export function SearchProvider({ children }: { children: ReactNode }) {
 
   const setPlaceName = useCallback((value: string) => {
     setSearchParams((prev) => ({ ...prev, placeName: value }));
+  }, []);
+
+  const setPage = useCallback((value: number) => {
+    setSearchParams((prev) => ({ ...prev, page: value }));
   }, []);
 
   const buildQueryParams = useCallback(() => {
@@ -75,7 +80,6 @@ export function SearchProvider({ children }: { children: ReactNode }) {
 
   const registerSearchHandler = useCallback(<T,>(handler: SearchHandler<T> | null) => {
     handlerRef.current = handler as SearchHandler<unknown> | null;
-    console.log("Registered search handler:", typeof handlerRef.current);
   }, []);
 
   const syncWithQueryParams = useCallback(() => {
@@ -83,21 +87,6 @@ export function SearchProvider({ children }: { children: ReactNode }) {
     const params = buildQueryParams();
     router.push(`${url.pathname}?${params}`);
   }, [router, buildQueryParams]);
-
-  const loadFromQueryParams = useCallback(() => {
-    const placeName = nextSearchParams.get("placeName");
-    if (placeName) {
-      setPlaceName(placeName);
-    }
-    const latitude = nextSearchParams.get("latitude");
-    if (latitude) {
-      setLatitude(latitude);
-    }
-    const longitude = nextSearchParams.get("longitude");
-    if (longitude) {
-      setLongitude(longitude);
-    }
-  }, [nextSearchParams, setPlaceName, setLatitude, setLongitude]);
 
   const executeSearch = useCallback(async <T,>(): Promise<T | null> => {
     const handler = handlerRef.current;
@@ -189,6 +178,7 @@ export function SearchProvider({ children }: { children: ReactNode }) {
     setLatitude,
     setLongitude,
     setPlaceName,
+    setPage,
     registerSearchHandler,
     executeSearch,
     executeSearchWithCoordinates,
