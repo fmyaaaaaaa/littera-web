@@ -87,7 +87,6 @@ export function ReportList({
                     </div>
                   )}
 
-                  {/* すべてのレポートが読み込まれた場合のメッセージ */}
                   {!hasMore && reports.length > 0 && (
                     <div className="py-2 text-center">
                       <p className="text-xs text-muted-foreground">All reports loaded</p>
