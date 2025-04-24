@@ -32,7 +32,7 @@ export function MapContainer() {
 
       setReports(response.data?.reports || []);
       return response.data;
-    } catch (error) {
+    } catch {
       toast.error("Failed to get report data");
       return null;
     } finally {
