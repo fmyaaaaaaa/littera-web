@@ -3,6 +3,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { ReportWithImage } from "@/types";
 import { type Variants, motion } from "framer-motion";
+import type { RefObject } from "react";
 import ReportListItem from "./ReportListItem";
 
 interface ReportListProps {
@@ -10,9 +11,20 @@ interface ReportListProps {
   selectedReportId: string | null;
   setSelectedReportId: (id: string) => void;
   isLoading: boolean;
+  hasMore?: boolean;
+  isLoadingMore?: boolean;
+  loaderRef?: RefObject<HTMLDivElement | null>;
 }
 
-export function ReportList({ reports, selectedReportId, setSelectedReportId, isLoading }: ReportListProps) {
+export function ReportList({
+  reports,
+  selectedReportId,
+  setSelectedReportId,
+  isLoading,
+  hasMore,
+  isLoadingMore,
+  loaderRef,
+}: ReportListProps) {
   const container: Variants = {
     hidden: { opacity: 0 },
     show: {
@@ -53,15 +65,35 @@ export function ReportList({ reports, selectedReportId, setSelectedReportId, isL
               {reports.length === 0 ? (
                 <p className="text-center py-4 text-muted-foreground">No report found</p>
               ) : (
-                reports.map((report) => (
-                  <ReportListItem
-                    key={report.id}
-                    report={report}
-                    selectedReportId={selectedReportId}
-                    setSelectedReportId={setSelectedReportId}
-                    itemVariants={item}
-                  />
-                ))
+                <>
+                  {reports.map((report) => (
+                    <ReportListItem
+                      key={report.id}
+                      report={report}
+                      selectedReportId={selectedReportId}
+                      setSelectedReportId={setSelectedReportId}
+                      itemVariants={item}
+                    />
+                  ))}
+                  {hasMore && (
+                    <div ref={loaderRef} className="py-2 text-center">
+                      {isLoadingMore ? (
+                        <div className="flex justify-center">
+                          <div className="w-5 h-5 border-2 border-t-transparent border-green-600 rounded-full animate-spin" />
+                        </div>
+                      ) : (
+                        <p className="text-xs text-muted-foreground">Scroll for more</p>
+                      )}
+                    </div>
+                  )}
+
+                  {/* すべてのレポートが読み込まれた場合のメッセージ */}
+                  {!hasMore && reports.length > 0 && (
+                    <div className="py-2 text-center">
+                      <p className="text-xs text-muted-foreground">All reports loaded</p>
+                    </div>
+                  )}
+                </>
               )}
             </motion.div>
           </ScrollArea>
