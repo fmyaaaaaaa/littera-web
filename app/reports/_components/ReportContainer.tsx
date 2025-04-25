@@ -4,7 +4,7 @@ import { getReportsWithImageByLocation } from "@/app/actions/getReportsWithImage
 import { useSearch } from "@/contexts/SearchContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 import type { ReportWithImage } from "@/types";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { CategorySelection } from "./CategorySelection";
 import { ReportDetail } from "./ReportDetail";
@@ -14,11 +14,14 @@ import { ReportList } from "./ReportList";
 
 export function ReportContainer() {
   const isMobile = useIsMobile();
-  const { registerSearchHandler, setPage, isSearching } = useSearch();
+  const { searchParams, registerSearchHandler, setPage, isSearching } = useSearch();
   const [reports, setReports] = useState<ReportWithImage[]>([]);
   const [selectedReportId, setSelectedReportId] = useState<string | null>(null);
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
   const [isOpen, setIsOpen] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const loaderRef = useRef<HTMLDivElement>(null);
 
   const filteredReports = useMemo(() => {
     if (!selectedCategoryId) {
@@ -53,12 +56,62 @@ export function ReportContainer() {
           setSelectedReportId(response.data.reports[0]?.id || null);
           setPage(response.data.pagination.current_page + 1);
         }
-      } catch (error) {
+      } catch {
         toast.error("Failed to get reports");
       }
     },
     [setPage]
   );
+
+  const loadMoreReports = useCallback(async () => {
+    if (!hasMore || isLoadingMore || isSearching) {
+      return;
+    }
+
+    try {
+      setIsLoadingMore(true);
+      const nextPage = searchParams.page || 1;
+      const response = await getReportsWithImageByLocation({
+        latitude: Number(searchParams.latitude),
+        longitude: Number(searchParams.longitude),
+        page: nextPage,
+      });
+      const data = response.data;
+      if (response.success && data) {
+        setReports((prev) => [...prev, ...data.reports]);
+        setPage(nextPage + 1);
+        setHasMore(data.pagination.has_next);
+      } else {
+        setHasMore(false);
+      }
+    } catch {
+      toast.error("Failed to load more reports");
+    } finally {
+      setIsLoadingMore(false);
+    }
+  }, [hasMore, isLoadingMore, searchParams, isSearching, setPage]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore) {
+          loadMoreReports();
+        }
+      },
+      { threshold: 0.5 }
+    );
+    const currentLoaderRef = loaderRef.current;
+
+    if (currentLoaderRef) {
+      observer.observe(currentLoaderRef);
+    }
+
+    return () => {
+      if (currentLoaderRef) {
+        observer.unobserve(currentLoaderRef);
+      }
+    };
+  }, [hasMore, loadMoreReports]);
 
   useEffect(() => {
     registerSearchHandler(searchHandler);
@@ -97,7 +150,11 @@ export function ReportContainer() {
           selectedReportId={selectedReportId}
           setSelectedReportId={handleSelectReport}
           isLoading={isSearching}
+          hasMore={hasMore}
+          isLoadingMore={isLoadingMore}
+          loaderRef={loaderRef}
         />
+
         {!isMobile && <ReportDetail report={selectedReport} isLoading={isSearching} />}
       </ReportLayout>
 
