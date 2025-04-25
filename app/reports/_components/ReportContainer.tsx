@@ -56,7 +56,7 @@ export function ReportContainer() {
           setSelectedReportId(response.data.reports[0]?.id || null);
           setPage(response.data.pagination.current_page + 1);
         }
-      } catch (error) {
+      } catch {
         toast.error("Failed to get reports");
       }
     },
@@ -84,7 +84,7 @@ export function ReportContainer() {
       } else {
         setHasMore(false);
       }
-    } catch (error) {
+    } catch {
       toast.error("Failed to load more reports");
     } finally {
       setIsLoadingMore(false);
@@ -100,14 +100,15 @@ export function ReportContainer() {
       },
       { threshold: 0.5 }
     );
+    const currentLoaderRef = loaderRef.current;
 
-    if (loaderRef.current) {
-      observer.observe(loaderRef.current);
+    if (currentLoaderRef) {
+      observer.observe(currentLoaderRef);
     }
 
     return () => {
-      if (loaderRef.current) {
-        observer.unobserve(loaderRef.current);
+      if (currentLoaderRef) {
+        observer.unobserve(currentLoaderRef);
       }
     };
   }, [hasMore, loadMoreReports]);

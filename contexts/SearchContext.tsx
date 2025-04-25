@@ -3,7 +3,7 @@
 import { geocodeLocationAction } from "@/app/actions/geocodeLocationAction";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
-import { type ReactNode, createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
+import { type ReactNode, createContext, useCallback, useContext, useRef, useState } from "react";
 import { toast } from "sonner";
 
 type LocationSearch = {

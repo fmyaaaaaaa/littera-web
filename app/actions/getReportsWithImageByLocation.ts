@@ -46,6 +46,7 @@ export const getReportsWithImageByLocation = async (
       },
     };
   } catch (error) {
+    console.error(error);
     return {
       success: false,
       error: "Failed to get reports with image by location",
