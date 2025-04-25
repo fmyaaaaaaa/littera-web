@@ -3,6 +3,7 @@
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader } from "@/components/ui/sidebar";
 import { sidebarItems } from "@/constants/sidebar";
 import AppLogo from "./app-logo";
+import AppPrivacy from "./app-privacy";
 import { NavMain } from "./nav-main";
 
 export default function AppSidebar() {
@@ -14,7 +15,9 @@ export default function AppSidebar() {
       <SidebarContent>
         <NavMain items={sidebarItems} />
       </SidebarContent>
-      <SidebarFooter />
+      <SidebarFooter>
+        <AppPrivacy />
+      </SidebarFooter>
     </Sidebar>
   );
 }
