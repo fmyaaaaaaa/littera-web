@@ -7,6 +7,7 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { Toaster } from "@/components/ui/sonner";
 import { SearchProvider } from "@/contexts/SearchContext";
 import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Suspense } from "react";
 
 const inter = Inter({
@@ -47,6 +48,7 @@ export default function RootLayout({
           </SearchProvider>
         </Suspense>
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
