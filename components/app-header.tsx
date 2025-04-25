@@ -4,6 +4,7 @@ import { useSearch } from "@/contexts/SearchContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { MapPin, Search } from "lucide-react";
 import dynamic from "next/dynamic";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 import { SearchInfo } from "./search-info";
@@ -82,8 +83,11 @@ const SearchInputs = dynamic(
   { ssr: false }
 );
 
+const APP_HEADER_PATHS = ["/map", "/reports"];
+
 export function AppHeader() {
   const isMobile = useIsMobile();
+  const pathname = usePathname();
   const { searchParams, setPlaceName, setLatitude, setLongitude, executeSearch, searchByPlaceName, isSearching } =
     useSearch();
   const [searchMode, setSearchMode] = useState<"coordinates" | "place">("place");
@@ -132,11 +136,14 @@ export function AppHeader() {
     }
   };
 
+  if (!APP_HEADER_PATHS.includes(pathname)) {
+    return null;
+  }
+
   return (
     <header className="w-full h-24 md:h-12 absolute top-0 left-0 right-0 z-50">
       <div className="flex h-full items-center gap-2 px-1 md:px-4">
         <SidebarTrigger className="-ml-1" />
-
         <Tabs value={searchMode} onValueChange={(value) => setSearchMode(value as "coordinates" | "place")}>
           <div className="flex flex-col md:flex-row items-start md:items-center gap-2">
             <div className="flex items-center gap-2">

@@ -1,4 +1,4 @@
-import { LayoutDashboard, MapPin, ScrollText } from "lucide-react";
+import { MapPin, ScrollText } from "lucide-react";
 
 export const sidebarItems = [
   {
