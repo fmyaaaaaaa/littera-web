@@ -115,8 +115,8 @@ export function ReportDetail({ report, isLoading }: ReportDetailProps) {
             >
               <div className="col-span-2 flex justify-center items-start">
                 <Image
-                  src={report.photo_url}
-                  alt={report.photo_url}
+                  src={report.photoUrl}
+                  alt={report.photoUrl}
                   width={650}
                   height={650}
                   className="rounded-md max-h-[80vh] object-contain"
@@ -138,7 +138,7 @@ export function ReportDetail({ report, isLoading }: ReportDetailProps) {
                       <div className="rounded-full bg-green-100 p-1.5 flex-shrink-0">
                         <Clock className="h-4 w-4 text-green-600" />
                       </div>
-                      <p className="text-caption-lg">{formatDate(report.report_date)}</p>
+                      <p className="text-caption-lg">{formatDate(report.reportDate)}</p>
                     </div>
 
                     <ReportStatusChip status={report.status} />
@@ -153,7 +153,7 @@ export function ReportDetail({ report, isLoading }: ReportDetailProps) {
                         <Tags className="h-4 w-4 text-green-600" />
                       </div>
                       <p className="text-caption-lg">
-                        {report.litter_categories.map((category) => category.en).join(", ")}
+                        {report.litterCategories.map((category) => category.en).join(", ")}
                       </p>
                     </div>
                   </div>

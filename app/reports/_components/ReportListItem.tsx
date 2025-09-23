@@ -48,13 +48,13 @@ export default function ReportListItem({
     >
       <div className="flex gap-3">
         <div className="relative w-28 h-28 rounded-xl overflow-hidden">
-          <Image src={report.photo_url} alt={report.id} fill className="object-cover" />
+          <Image src={report.photoUrl} alt={report.id} fill className="object-cover" />
         </div>
         <div className="flex flex-col gap-2">
-          <p className="text-caption-lg">{formatDate(report.report_date)}</p>
+          <p className="text-caption-lg">{formatDate(report.reportDate)}</p>
           <ReportStatusChip status={report.status} />
           <DistanceText distance={distance} />
-          <LitterCategoryChips categories={report.litter_categories} size="sm" variant="green" />
+          <LitterCategoryChips categories={report.litterCategories} size="sm" variant="green" />
         </div>
       </div>
     </motion.div>
