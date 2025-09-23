@@ -62,8 +62,8 @@ export function ReportDetailDialog({ report, isOpen, onClose }: ReportDetailDial
           <div className="relative w-full h-[40vh]">
             {!imageLoaded && <div className="absolute inset-0 bg-muted animate-pulse" />}
             <Image
-              src={report.photo_url}
-              alt={report.photo_url}
+              src={report.photoUrl}
+              alt={report.photoUrl}
               fill
               className="object-cover"
               onLoadingComplete={() => setImageLoaded(true)}
@@ -87,7 +87,7 @@ export function ReportDetailDialog({ report, isOpen, onClose }: ReportDetailDial
                   <div className="rounded-full bg-green-100 p-1.5 flex-shrink-0">
                     <Clock className="h-4 w-4 text-green-600" />
                   </div>
-                  <p className="text-caption-lg">{formatDate(report.report_date)}</p>
+                  <p className="text-caption-lg">{formatDate(report.reportDate)}</p>
                 </div>
 
                 <ReportStatusChip status={report.status} />
@@ -102,9 +102,7 @@ export function ReportDetailDialog({ report, isOpen, onClose }: ReportDetailDial
                   <div className="rounded-full bg-green-100 p-1.5 flex-shrink-0">
                     <Tags className="h-4 w-4 text-green-600" />
                   </div>
-                  <p className="text-caption-lg">
-                    {report.litter_categories.map((category) => category.en).join(", ")}
-                  </p>
+                  <p className="text-caption-lg">{report.litterCategories.map((category) => category.en).join(", ")}</p>
                 </div>
               </div>
             </div>

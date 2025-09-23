@@ -23,11 +23,13 @@ export function ReportContainer() {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const loaderRef = useRef<HTMLDivElement>(null);
 
+  console.log(reports);
+
   const filteredReports = useMemo(() => {
     if (!selectedCategoryId) {
       return reports;
     }
-    return reports.filter((report) => report.litter_categories.some((category) => category.id === selectedCategoryId));
+    return reports.filter((report) => report.litterCategories.some((category) => category.id === selectedCategoryId));
   }, [reports, selectedCategoryId]);
 
   const selectedReport = filteredReports.find((report) => report.id === selectedReportId) || null;
@@ -54,7 +56,7 @@ export function ReportContainer() {
         if (response.data) {
           setReports(response.data.reports);
           setSelectedReportId(response.data.reports[0]?.id || null);
-          setPage(response.data.pagination.current_page + 1);
+          setPage(response.data.pagination.currentPage + 1);
         }
       } catch {
         toast.error("Failed to get reports");
@@ -80,7 +82,7 @@ export function ReportContainer() {
       if (response.success && data) {
         setReports((prev) => [...prev, ...data.reports]);
         setPage(nextPage + 1);
-        setHasMore(data.pagination.has_next);
+        setHasMore(data.pagination.hasNext);
       } else {
         setHasMore(false);
       }
@@ -124,7 +126,7 @@ export function ReportContainer() {
     setSelectedCategoryId(id);
     if (id) {
       const firstReportInCategory = reports.find((report) =>
-        report.litter_categories.some((category) => category.id === id)
+        report.litterCategories.some((category) => category.id === id)
       );
       if (firstReportInCategory) {
         setSelectedReportId(firstReportInCategory.id);
