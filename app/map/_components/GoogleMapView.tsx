@@ -69,17 +69,17 @@ export function GoogleMapView({ reports }: GoogleMapViewProps) {
             <InfoWindow
               position={{ lat: reportDetail.latitude, lng: reportDetail.longitude }}
               onCloseClick={() => setReportDetail(null)}
-              headerContent={<p className="text-caption-lg text-center">{formatDate(reportDetail.report_date)}</p>}
+              headerContent={<p className="text-caption-lg text-center">{formatDate(reportDetail.reportDate)}</p>}
             >
               <div className="flex flex-col gap-2">
                 <Image
-                  src={reportDetail.photo_url}
-                  alt={reportDetail.report_date}
+                  src={reportDetail.photoUrl}
+                  alt={reportDetail.reportDate}
                   width={isMobile ? 230 : 500}
                   height={isMobile ? 230 : 500}
                   className="rounded-sm"
                 />
-                <LitterCategoryChips categories={reportDetail.litter_categories} size="sm" />
+                <LitterCategoryChips categories={reportDetail.litterCategories} size="sm" />
               </div>
             </InfoWindow>
           )}

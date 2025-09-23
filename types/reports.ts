@@ -15,10 +15,10 @@ export interface Report {
   id: string;
   latitude: number;
   longitude: number;
-  report_date: string;
+  reportDate: string;
   status: ReportStatus;
-  main_category_id: number;
-  litter_categories: LitterCategory[];
+  mainCategoryId: number;
+  litterCategories: LitterCategory[];
 }
 
 export interface ReportsResponse {
@@ -30,13 +30,13 @@ export interface ReportsResponse {
 }
 
 export interface ReportDetail {
-  report_id: string;
+  reportId: string;
   latitude: number;
   longitude: number;
-  report_date: string;
+  reportDate: string;
   status: ReportStatus;
-  litter_categories: LitterCategory[];
-  photo_url: string;
+  litterCategories: LitterCategory[];
+  photoUrl: string;
 }
 
 export interface ReportDetailResponse {
@@ -46,7 +46,7 @@ export interface ReportDetailResponse {
 }
 
 export interface ReportWithImage extends Report {
-  photo_url: string;
+  photoUrl: string;
 }
 
 export interface ReportsWithImageResponse {
